@@ -15,22 +15,23 @@
 
 - (void) saveImage:(CDVInvokedUrlCommand*)command
 {
-	NSDictionary *options = command.arguments[0];
-	NSString *url = [options objectForKey:@"url"];
-	self.cbMethod=[[options objectForKey:@"cbMethod"] description];
-	
-	UIImage *pic = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:url]]];
-	
-	UIImageWriteToSavedPhotosAlbum(pic, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
-	
+    NSDictionary *options = command.arguments[0];
+    NSString *url = [options objectForKey:@"url"];
+    self.cbMethod=[[options objectForKey:@"cbMethod"] description];
+    
+    self.callbackID = command.callbackId;
+    
+    UIImage *pic = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:url]]];
+    
+    UIImageWriteToSavedPhotosAlbum(pic, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
+    
 }
 
 - (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo
 {
-    
-	NSString* jsString = [NSString stringWithFormat:@"%@(\"%i\");", self.cbMethod, error ? 0 : 1];
-	[super writeJavascript:jsString];
-	
+    CDVPluginResult* pluginResult = nil;
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackID];
 }
 
 @end

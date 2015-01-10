@@ -13,6 +13,7 @@
 @interface SaveImageFromURL : CDVPlugin
 
 @property (nonatomic, copy) NSString *cbMethod;
+@property(strong) NSString* callbackID;
 
 // Saves an image from URL to the 'Saved Photos' album
 - (void)saveImage:(CDVInvokedUrlCommand*)command;
